@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Yes or No?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body,
+    html {
+      height: 100%;
+      margin: 0;
+    }
+    .bg {
+      background-image: url("https://yesno.wtf/assets/yes/8-2f93962e2ab24427df8589131da01a4d.gif");
+      height: 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .container {
+      text-align: center;
+    }
+    .answer {
+      color: white;
+      font-size: 8vw; 
+      text-align: center;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .question-input {
+      margin-bottom: 20px;
+      padding: 10px;
+      font-size: 16px;
+      color: white; 
+      background-color: transparent; 
+      border: none;
+      border-bottom: 2px solid white; 
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .question-input::placeholder {
+      color: white; 
+    }
+    .ask-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: white; 
+      background-color: #3498db;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .ask-button:hover {
+      background-color: #2980b9; 
+    }
+    @media only screen and (max-width: 600px) {
+      .answer {
+        font-size: 12vw; 
+      }
+      .question-input,
+      .ask-button {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg">
+    <div class="container">
+      <form id="questionForm">
+        <input type="text" name="question" class="question-input" placeholder="Enter your question" />
+        <br>
+        <button type="submit" class="ask-button">Ask</button>
+      </form>
+      <div class="answer" onclick="toggleAnswer()" id="answerText">Yes</div>
+    </div>
+  </div>
+
+  <script>
+    function toggleAnswer() {
+      var answerDiv = document.getElementById("answerText");
+      var currentAnswer = answerDiv.textContent.trim();
+      var apiUrl = "https://yesno.wtf/api";
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          var gifUrl = data.image;
+          answerDiv.textContent = currentAnswer === "Yes" ? "No" : "Yes";
+          document.querySelector('.bg').style.backgroundImage = "url('" + gifUrl + "')";
+        })
+        .catch(error => {
+          console.error('Error fetching data: ', error);
+        });
+    }
+
+    document.getElementById("questionForm").addEventListener("submit", function(event) {
+      event.preventDefault();
+      var questionInput = document.querySelector(".question-input");
+      var question = questionInput.value;
+      if (question.includes("?")) { 
+        var apiUrl = "https://yesno.wtf/api";
+        fetch(apiUrl)
+          .then(response => response.json())
+          .then(data => {
+            var gifUrl = data.image;
+            document.querySelector('.bg').style.backgroundImage = "url('" + gifUrl + "')";
+          })
+          .catch(error => {
+            console.error('Error fetching data: ', error);
+          });
+      }
+      questionInput.value = ""; 
+    });
+  </script>
+</body>
+</html>
